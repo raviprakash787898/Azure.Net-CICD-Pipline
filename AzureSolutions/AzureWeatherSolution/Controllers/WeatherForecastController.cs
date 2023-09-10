@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AzureWeatherSolution.Controllers
 {
@@ -28,6 +29,15 @@ namespace AzureWeatherSolution.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet(Name = "HeartBeat")]
+        public IActionResult HeartBeat()
+        {
+            return new ContentResult() 
+            {
+                Content = "Heart Beating...", ContentType = "application/json", StatusCode = Convert.ToInt32(HttpStatusCode.OK)
+            };
         }
     }
 }
