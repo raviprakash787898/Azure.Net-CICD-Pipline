@@ -3,32 +3,31 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-trigger:
-- main
+name: Publish
 
-pool:
-  vmImage: 'windows-latest'
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+jobs:
+  publish:
+    runs-on: ubuntu-latest
 
-steps:
-- task: NuGetToolInstaller@1
+  steps:
+    - uses: actions/checkout@v3
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    - name: Restore
+      run: dotnet restore ./AzureSolutions.sln
+      
+    - name: Build
+      run: dotnet build ./AzureSolutions.sln --configuration Release --no-restore
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    - name: Publish
+      run: dotnet publish ./AzureSolutions.sln --configuration Release --no-build
