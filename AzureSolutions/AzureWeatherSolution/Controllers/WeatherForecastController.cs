@@ -36,7 +36,7 @@ namespace AzureWeatherSolution.Controllers
         {
             return new ContentResult() 
             {
-                Content = "Heart Beating Checking1...", ContentType = "application/json", StatusCode = Convert.ToInt32(HttpStatusCode.OK)
+                Content = "Heart Beating Checking...", ContentType = "application/json", StatusCode = Convert.ToInt32(HttpStatusCode.OK)
             };
         }
     }
